@@ -5,41 +5,50 @@ public class Polynomial {
     private final List<Node> nodeList;
 
     public Polynomial() {
-        this.nodeList = new LinkedList<>();
+        nodeList = new LinkedList<>();
     }
 
     public Polynomial(int[] multipliers) {
-        this.nodeList = new LinkedList<>();
+        nodeList = new LinkedList<>();
 
         int degree = multipliers.length - 1;
         for (int multiplier : multipliers) {
             if (multiplier == 0) {
                 degree--;
             } else {
-                this.nodeList.add(new Node(multiplier, degree--));
+                nodeList.add(new Node(multiplier, degree--));
             }
         }
+    }
+
+    public int size() {
+        return nodeList.size();
+    }
+
+    public boolean isBigger(Polynomial b) {
+        return nodeList.size() > b.size();
+    }
+
+    public boolean isSmaller(Polynomial b) {
+        return nodeList.size() < b.size();
+    }
+
+    public void add(int multiplier, int degree) {
+        nodeList.add(new Node(multiplier, degree));
+    }
+
+    public void add(int index, int multiplier, int degree) {
+        nodeList.add(index, new Node(multiplier, degree));
     }
 
     public static Polynomial sum(Polynomial a, Polynomial b) {
-        Polynomial max = max(a, b);
-        Polynomial min = min(a, b);
-        Polynomial result = new Polynomial();
-
-        for (Node i : max.nodeList) {
-            for (Node j : min.nodeList) {
-                if (i.getDegree() > j.getDegree()) {
-                    result.nodeList.add(new Node(i.getMultiplier(), i.getDegree()));
-                    break;
-                } else if (i.getDegree() == j.getDegree()) {
-                    result.nodeList.add(new Node(i.getMultiplier() + j.getMultiplier(), i.getDegree()));
-                    break;
-                }
-            }
-        }
-
-        return result;
+        return Polynomial.calculation(a, b, Operator.PLUS);
     }
+
+    public static Polynomial sub(Polynomial a, Polynomial b) {
+        return Polynomial.calculation(a, b, Operator.MINUS);
+    }
+
 
     public static Polynomial max(Polynomial a, Polynomial b) {
         return (a.nodeList.size() >= b.nodeList.size()) ? a : b;
@@ -80,6 +89,33 @@ public class Polynomial {
             }
         }
 
+    }
+
+    private static Polynomial calculation(Polynomial a, Polynomial b, Operator operator) {
+        Polynomial result = new Polynomial();
+
+        //Выравниваем полиномы по длине, путем добавления нулей в начало
+        int degree = b.size() - 1;
+        while (a.isSmaller(b)) {
+            a.add(0, 0, degree--);
+        }
+
+        for (Node i : a.nodeList) {
+            for (Node j : b.nodeList) {
+                if (i.getDegree() == j.getDegree()) {
+                    //В зависимости от оператора, производится опреация сложения или вычитания
+                    result.nodeList.add(
+                            new Node(operator == Operator.PLUS ?
+                                    i.getMultiplier() + j.getMultiplier() :
+                                    i.getMultiplier() - j.getMultiplier()
+                                    , i.getDegree())
+                    );
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 }
 
