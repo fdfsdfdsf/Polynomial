@@ -43,4 +43,16 @@ public class PolynomialTest {
         Assert.assertEquals("4X^3 + 6X^2 + 8X + 10", c.toString());
         Assert.assertEquals("4X^3 + 6X^2 + 8X + 10", d.toString());
     }
+
+    @Test
+    public void subPolynomials() {
+        Polynomial a = new Polynomial(new int[]{1, 2, 3});
+        Polynomial b = new Polynomial(new int[]{4, 5, 6, 7});
+
+        Polynomial c = Polynomial.sub(a, b); // a - b
+        Polynomial d = Polynomial.sub(b, a); // b - a
+
+        Assert.assertEquals("-4X^3 - 4X^2 - 4X - 4", c.toString());
+        Assert.assertEquals("4X^3 + 4X^2 + 4X + 4", d.toString());
+    }
 }
