@@ -41,6 +41,19 @@ public class Polynomial {
         nodeList.add(index, new Node(multiplier, degree));
     }
 
+    public void remove(int index) {
+        nodeList.remove(index);
+    }
+
+    public Node get(int index) {
+        return nodeList.get(index);
+    }
+
+    public void set(int index, int multiplier, int degree) {
+        nodeList.get(index).setDegree(degree);
+        nodeList.get(index).setMultiplier(multiplier);
+    }
+
     public static Polynomial sum(Polynomial a, Polynomial b) {
         return Polynomial.calculation(a, b, Operator.PLUS);
     }
@@ -49,6 +62,28 @@ public class Polynomial {
         return Polynomial.calculation(a, b, Operator.MINUS);
     }
 
+    public static Polynomial mul(Polynomial a, Polynomial b) {
+        Polynomial result = new Polynomial();
+
+        //Перемножить полиномы
+        for (Node i : a.nodeList) {
+            for (Node j : b.nodeList) {
+                result.add(i.getMultiplier() * j.getMultiplier(), i.getDegree() + j.getDegree());
+            }
+        }
+
+        //Упрощаем выражение
+        for (int i = 0; i < result.size(); i++) {
+            for (int j = i + 1; j < result.size(); j++) {
+                if (result.get(i).getDegree() == result.get(j).getDegree()) {
+                    result.set(i, result.get(i).getMultiplier() + result.get(j).getMultiplier(), result.get(i).getDegree());
+                    result.remove(j);
+                }
+            }
+        }
+
+        return result;
+    }
 
     public static Polynomial max(Polynomial a, Polynomial b) {
         return (a.nodeList.size() >= b.nodeList.size()) ? a : b;
@@ -120,8 +155,8 @@ public class Polynomial {
 }
 
 class Node {
-    private final int multiplier;
-    private final int degree;
+    private int multiplier;
+    private int degree;
 
     public Node(int multiplier, int degree) {
         this.multiplier = multiplier;
@@ -134,5 +169,13 @@ class Node {
 
     public int getDegree() {
         return degree;
+    }
+
+    public void setMultiplier(int multiplier) {
+        this.multiplier = multiplier;
+    }
+
+    public void setDegree(int degree) {
+        this.degree = degree;
     }
 }
