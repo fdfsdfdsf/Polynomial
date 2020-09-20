@@ -55,4 +55,26 @@ public class PolynomialTest {
         Assert.assertEquals("-4X^3 - 4X^2 - 4X - 4", c.toString());
         Assert.assertEquals("4X^3 + 4X^2 + 4X + 4", d.toString());
     }
+
+    @Test
+    public void mulPolynomials() {
+        Polynomial a = new Polynomial(new int[]{2, 0, -3}); //2X^2 - 3
+        Polynomial b = new Polynomial(new int[]{1, 2}); //X + 2
+        Polynomial c = Polynomial.mul(a, b);
+        Assert.assertEquals("2X^3 + 4X^2 - 3X - 6", c.toString());
+
+        //Проверка сокрощения подобных членов
+        Polynomial a1 = new Polynomial(new int[]{1, -1}); //X - 1
+        Polynomial b1 = new Polynomial(new int[]{1, 1, 1}); //X^2 + X + 1
+        Polynomial c1 = Polynomial.mul(a1, b1);
+        Polynomial d1 = Polynomial.mul(b1, a1);
+        Assert.assertEquals("1X^3 - 1", c1.toString());
+        Assert.assertEquals("1X^3 - 1", d1.toString());
+
+        //Проверка сложения подобных членов
+        Polynomial a2 = new Polynomial(new int[]{1, 1, 0, 10}); //X^3 + X^2 + 10
+        Polynomial b2 = new Polynomial(new int[]{1, 2, 5}); //X^2 + 2X + 5
+        Polynomial c2 = Polynomial.mul(a2, b2);
+        Assert.assertEquals("1X^5 + 3X^4 + 7X^3 + 15X^2 + 20X + 50", c2.toString());
+    }
 }
